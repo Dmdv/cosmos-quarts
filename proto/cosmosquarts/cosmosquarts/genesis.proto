@@ -1,0 +1,12 @@
+syntax = "proto3";
+package dmdv.cosmosquarts.cosmosquarts;
+
+import "gogoproto/gogo.proto";
+import "cosmosquarts/cosmosquarts/params.proto";
+
+option go_package = "github.com/dmdv/cosmos-quarts/x/cosmosquarts/types";
+
+// GenesisState defines the cosmosquarts module's genesis state.
+message GenesisState {
+  Params params = 1 [(gogoproto.nullable) = false];
+}
