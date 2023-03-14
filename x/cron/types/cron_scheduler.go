@@ -31,7 +31,9 @@ var (
 // NewCronScheduler creates a new CronScheduler instance
 func NewCronScheduler() CronScheduler {
 	return CronScheduler{
-		cron: cron.New(),
+		cron: cron.New(cron.WithChain(
+			cron.Recover(cron.DefaultLogger),
+		)),
 	}
 }
 

@@ -13,3 +13,7 @@ func (k Keeper) ScheduleTask(
 ) error {
 	return k.cronScheduler.RegisterTask(ctx, spec, taskFunc, settings)
 }
+
+func (k Keeper) Run(_ sdk.Context) error {
+	return k.cronScheduler.Run()
+}
