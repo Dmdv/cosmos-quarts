@@ -3,7 +3,7 @@ package types
 import (
 	"errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/robfig/cron"
+	"github.com/robfig/cron/v3"
 )
 
 // Declarations -----------------------------------------------------------
