@@ -106,6 +106,9 @@ import (
 	cosmosquartsmodule "github.com/dmdv/cosmos-quarts/x/cosmosquarts"
 	cosmosquartsmodulekeeper "github.com/dmdv/cosmos-quarts/x/cosmosquarts/keeper"
 	cosmosquartsmoduletypes "github.com/dmdv/cosmos-quarts/x/cosmosquarts/types"
+	cronmodule "github.com/dmdv/cosmos-quarts/x/cron"
+	cronmodulekeeper "github.com/dmdv/cosmos-quarts/x/cron/keeper"
+	cronmoduletypes "github.com/dmdv/cosmos-quarts/x/cron/types"
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 
 	appparams "github.com/dmdv/cosmos-quarts/app/params"
@@ -165,6 +168,7 @@ var (
 		ica.AppModuleBasic{},
 		vesting.AppModuleBasic{},
 		cosmosquartsmodule.AppModuleBasic{},
+		cronmodule.AppModuleBasic{},
 		// this line is used by starport scaffolding # stargate/app/moduleBasic
 	)
 
@@ -239,6 +243,8 @@ type App struct {
 	ScopedICAHostKeeper  capabilitykeeper.ScopedKeeper
 
 	CosmosquartsKeeper cosmosquartsmodulekeeper.Keeper
+
+	CronKeeper cronmodulekeeper.Keeper
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
 	// mm is the module manager
@@ -284,6 +290,7 @@ func New(
 		ibctransfertypes.StoreKey, icahosttypes.StoreKey, capabilitytypes.StoreKey, group.StoreKey,
 		icacontrollertypes.StoreKey,
 		cosmosquartsmoduletypes.StoreKey,
+		cronmoduletypes.StoreKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
@@ -503,6 +510,14 @@ func New(
 	)
 	cosmosquartsModule := cosmosquartsmodule.NewAppModule(appCodec, app.CosmosquartsKeeper, app.AccountKeeper, app.BankKeeper)
 
+	app.CronKeeper = *cronmodulekeeper.NewKeeper(
+		appCodec,
+		keys[cronmoduletypes.StoreKey],
+		keys[cronmoduletypes.MemStoreKey],
+		app.GetSubspace(cronmoduletypes.ModuleName),
+	)
+	cronModule := cronmodule.NewAppModule(appCodec, app.CronKeeper, app.AccountKeeper, app.BankKeeper)
+
 	// this line is used by starport scaffolding # stargate/app/keeperDefinition
 
 	/**** IBC Routing ****/
@@ -569,6 +584,7 @@ func New(
 		transferModule,
 		icaModule,
 		cosmosquartsModule,
+		cronModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
 
@@ -599,6 +615,7 @@ func New(
 		paramstypes.ModuleName,
 		vestingtypes.ModuleName,
 		cosmosquartsmoduletypes.ModuleName,
+		cronmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/beginBlockers
 	)
 
@@ -624,6 +641,7 @@ func New(
 		upgradetypes.ModuleName,
 		vestingtypes.ModuleName,
 		cosmosquartsmoduletypes.ModuleName,
+		cronmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/endBlockers
 	)
 
@@ -654,6 +672,7 @@ func New(
 		upgradetypes.ModuleName,
 		vestingtypes.ModuleName,
 		cosmosquartsmoduletypes.ModuleName,
+		cronmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/initGenesis
 	)
 
@@ -684,6 +703,7 @@ func New(
 		ibc.NewAppModule(app.IBCKeeper),
 		transferModule,
 		cosmosquartsModule,
+		cronModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
 	app.sm.RegisterStoreDecoders()
@@ -889,6 +909,7 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(icacontrollertypes.SubModuleName)
 	paramsKeeper.Subspace(icahosttypes.SubModuleName)
 	paramsKeeper.Subspace(cosmosquartsmoduletypes.ModuleName)
+	paramsKeeper.Subspace(cronmoduletypes.ModuleName)
 	// this line is used by starport scaffolding # stargate/app/paramSubspace
 
 	return paramsKeeper

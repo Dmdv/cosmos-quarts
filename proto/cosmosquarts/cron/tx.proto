@@ -1,0 +1,7 @@
+syntax = "proto3";
+package dmdv.cosmosquarts.cron;
+
+option go_package = "github.com/dmdv/cosmos-quarts/x/cron/types";
+
+// Msg defines the Msg service.
+service Msg {}
