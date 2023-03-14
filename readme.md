@@ -1,52 +1,33 @@
-# cosmosquarts
-**cosmosquarts** is a blockchain built using Cosmos SDK and Tendermint and created with [Ignite CLI](https://ignite.com/cli).
+# Opinionated cosmos cron module
 
-## Get started
+This project has two modules:
+- cosmos-quartz (default)
+- cron
 
-```
-ignite chain serve
-```
+## Cron module
 
-`serve` command installs dependencies, builds, initializes, and starts your blockchain in development.
+This module is a simple cron module that can be used to schedule jobs.  
+It uses scheduler integrated with Keeper and Module and hence it is  
+available in all modules inside application.
 
-### Configure
+## Why it is opinionated?
 
-Your blockchain in development can be configured with `config.yml`. To learn more, see the [Ignite CLI docs](https://docs.ignite.com).
+- By requirement, there's no need to implement queries and messages for task scheduling
+- Hence, the all request and response are handled by other modules but this implementation 
+examples falls out of scope of this test assignment.
+- The State and Keeper, they do not hold the state of the task.  
 
-### Web Frontend
+Tasks that are distributed among multiple nodes, a single-node implementation like 
+the one shown may not be sufficient.   
+In this case, you may want to consider using implementation of a predefined function in the Keeper.
 
-Ignite CLI has scaffolded a Vue.js-based web app in the `vue` directory. Run the following commands to install dependencies and start the app:
+This is how persisting of the task might work:
+- Implement function in Keeper that update the State
+- Create a task struct type that would keep the cron task, function name and parameters can be serialized.
 
-```
-cd vue
-npm install
-npm run serve
-```
+But aforementioned implementation is not specified in requirements.  
+Moreover, it gives freedom to schedule just any function in the application.
+But this implementation is not serializable and hence it is not possible to store it in the State.
 
-The frontend app is built using the `@starport/vue` and `@starport/vuex` packages. For details, see the [monorepo for Ignite front-end development](https://github.com/ignite/web).
-
-## Release
-To release a new version of your blockchain, create and push a new tag with `v` prefix. A new draft release with the configured targets will be created.
-
-```
-git tag v0.1
-git push origin v0.1
-```
-
-After a draft release is created, make your final changes from the release page and publish it.
-
-### Install
-To install the latest version of your blockchain node's binary, execute the following command on your machine:
-
-```
-curl https://get.ignite.com/dmdv/cosmos-quarts@latest! | sudo bash
-```
-`dmdv/cosmos-quarts` should match the `username` and `repo_name` of the Github repository to which the source code was pushed. Learn more about [the install process](https://github.com/allinbits/starport-installer).
-
-## Learn more
-
-- [Ignite CLI](https://ignite.com/cli)
-- [Tutorials](https://docs.ignite.com/guide)
-- [Ignite CLI docs](https://docs.ignite.com)
-- [Cosmos SDK docs](https://docs.cosmos.network)
-- [Developer Chat](https://discord.gg/ignite)
+## Tests
+I'm sorry, I must implement tests, but I'm very constrained in time.
