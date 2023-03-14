@@ -19,7 +19,6 @@ type Function func(ctx sdk.Context, params map[string]interface{})
 type CronScheduler struct {
 	// Internal state and configuration
 	cron *cron.Cron
-	ctx  sdk.Context
 }
 
 var (
@@ -30,10 +29,9 @@ var (
 // Create a new CronScheduler instance --------------------------------------
 
 // NewCronScheduler creates a new CronScheduler instance
-func NewCronScheduler(ctx sdk.Context) CronScheduler {
+func NewCronScheduler() CronScheduler {
 	return CronScheduler{
 		cron: cron.New(),
-		ctx:  ctx,
 	}
 }
 
@@ -41,6 +39,7 @@ func NewCronScheduler(ctx sdk.Context) CronScheduler {
 
 // RegisterTask Registers a task with the scheduler, using the specified cron syntax and function
 func (cs *CronScheduler) RegisterTask(
+	ctx sdk.Context,
 	spec string,
 	taskFn Function,
 	settings map[string]interface{},
@@ -52,7 +51,7 @@ func (cs *CronScheduler) RegisterTask(
 	}
 
 	cs.cron.Schedule(scheduler, cron.FuncJob(func() {
-		taskFn(cs.ctx, settings)
+		taskFn(ctx, settings)
 	}))
 
 	return nil

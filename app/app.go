@@ -243,8 +243,8 @@ type App struct {
 	ScopedICAHostKeeper  capabilitykeeper.ScopedKeeper
 
 	CosmosquartsKeeper cosmosquartsmodulekeeper.Keeper
-
-	CronKeeper cronmodulekeeper.Keeper
+	CronKeeper         cronmodulekeeper.Keeper
+	CronScheduler      cronmoduletypes.CronScheduler
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
 	// mm is the module manager
@@ -296,6 +296,9 @@ func New(
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
 
+	// Initialize the cron scheduler
+	cronScheduler := cronmoduletypes.NewCronScheduler()
+
 	app := &App{
 		BaseApp:           bApp,
 		cdc:               cdc,
@@ -306,6 +309,8 @@ func New(
 		tkeys:             tkeys,
 		memKeys:           memKeys,
 	}
+
+	app.CronScheduler = cronScheduler
 
 	app.ParamsKeeper = initParamsKeeper(
 		appCodec,
@@ -511,6 +516,7 @@ func New(
 	cosmosquartsModule := cosmosquartsmodule.NewAppModule(appCodec, app.CosmosquartsKeeper, app.AccountKeeper, app.BankKeeper)
 
 	app.CronKeeper = *cronmodulekeeper.NewKeeper(
+		cronScheduler,
 		appCodec,
 		keys[cronmoduletypes.StoreKey],
 		keys[cronmoduletypes.MemStoreKey],
