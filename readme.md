@@ -30,4 +30,4 @@ Moreover, it gives freedom to schedule just any function in the application.
 But this implementation is not serializable and hence it is not possible to store it in the State.
 
 ## Tests
-I'm sorry, I must implement tests, but I'm very constrained in time.
+Todo
